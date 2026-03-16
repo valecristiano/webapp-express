@@ -9,6 +9,6 @@ app.use(express.json());
 const moviesRouter = require("./routers/movies");
 app.use("/movies", moviesRouter);
 
-app.listen(3000, () => {
+app.listen(process.env.APP_PORT, () => {
   console.log("Server linstening!");
 });

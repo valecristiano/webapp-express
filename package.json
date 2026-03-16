@@ -1,0 +1,21 @@
+{
+  "name": "webapp-express",
+  "version": "1.0.0",
+  "description": "Movies express webapp",
+  "repository": {
+    "type": "git",
+    "url": "webapp-express"
+  },
+  "license": "ISC",
+  "author": "Valeria Cristiano",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "watch": "node --watch app.js",
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

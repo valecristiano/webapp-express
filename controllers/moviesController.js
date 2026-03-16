@@ -1,15 +1,16 @@
 const connection = require("../database/connection");
+const { errorQuery, resultNotfound } = require("../utils/dbFunctions");
 
 function index(req, res) {
   const sql = `SELECT * FROM movies`;
 
-  connection.query(sql, (err, results) => {
-    if (err)
-      return res.status(500).json({
-        message: "Internal server error",
-        success: false,
-      });
-    res.json(results);
+  connection.query(sql, (err, MoviesResults) => {
+    if (err) return errorQuery(err, res);
+
+    const movies = MoviesResults.map((movie) => {
+      return { ...movie, image: moviesImageUrl(movie.image) };
+    });
+    res.json({ result: movies });
   });
 }
 
@@ -21,15 +22,11 @@ function show(req, res) {
   const reviewSql = `SELECT * FROM reviews WHERE movie_id=?`;
 
   connection.query(moviesSql, [id], (err, movieResult) => {
-    if (err)
-      return res.status(500).json({
-        message: "Internal server error",
-        success: false,
-      });
+    if (err) return errorQuery(err, res);
 
     const movie = movieResult[0];
 
-    if (!movie) return res.status(404).json({ error: "Movie not found" });
+    if (!movie) return resultNotfound(res);
 
     connection.query(reviewSql, [id], (err, reviewResult) => {
       if (err)
@@ -39,9 +36,15 @@ function show(req, res) {
         });
 
       movie.reviews = reviewResult;
+      movie.image = moviesImageUrl(movie.image);
+
       res.json({ result: movie });
     });
   });
+}
+
+function moviesImageUrl(image) {
+  return `${process.env.APP_URL}:${process.env.APP_PORT}/${image}`;
 }
 
 module.exports = { index, show };

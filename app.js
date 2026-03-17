@@ -5,6 +5,14 @@ const app = express();
 app.use(express.static("public"));
 app.use(express.json());
 
+//MW Cors
+const cors = require("cors");
+app.use(
+  cors({
+    orogin: process.env.FRONTEND_URL,
+  }),
+);
+
 //Logger
 const logger = require("./middlewares/logger");
 app.use(logger);

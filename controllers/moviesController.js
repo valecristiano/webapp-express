@@ -38,6 +38,35 @@ LIMIT 1;`;
   });
 }
 
+function showBestRated(req, res) {
+  const sqlLatest = `
+  SELECT
+ movies.id,
+  movies.title,
+  movies.image,
+  movies.abstract,
+  movies.director,
+  movies.release_year,
+  movies.genre,
+  reviews.vote
+ FROM movies.reviews
+ JOIN movies.movies
+ ON reviews.movie_id = movies.id
+ ORDER BY vote DESC
+ LIMIT 1
+ ;`;
+
+  connection.query(sqlLatest, (err, bestResult) => {
+    if (err) return errorQuery(err, res);
+    console.log(bestResult[0]);
+
+    const bestMovie = bestResult.map((movie) => {
+      return { ...movie, image: moviesImageUrl(movie.image) };
+    });
+    res.json({ result: bestMovie[0] });
+  });
+}
+
 function show(req, res) {
   const { id } = req.params;
 
@@ -85,4 +114,4 @@ function moviesImageUrl(image) {
   return `${process.env.APP_URL}:${process.env.APP_PORT}/${image}`;
 }
 
-module.exports = { index, show, showLatest };
+module.exports = { index, show, showLatest, showBestRated };

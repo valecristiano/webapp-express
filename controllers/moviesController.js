@@ -14,6 +14,30 @@ function index(req, res) {
   });
 }
 
+function showLatest(req, res) {
+  const sqlLatest = `SELECT 
+  movies.id,
+  movies.title,
+  movies.image,
+  movies.abstract,
+  movies.director,
+  movies.release_year,
+  movies.genre
+ FROM movies.movies
+ORDER BY release_year DESC 
+LIMIT 1;`;
+
+  connection.query(sqlLatest, (err, latestResult) => {
+    if (err) return errorQuery(err, res);
+    console.log(latestResult[0]);
+
+    const latestmovie = latestResult.map((movie) => {
+      return { ...movie, image: moviesImageUrl(movie.image) };
+    });
+    res.json({ result: latestmovie[0] });
+  });
+}
+
 function show(req, res) {
   const { id } = req.params;
 
@@ -61,4 +85,4 @@ function moviesImageUrl(image) {
   return `${process.env.APP_URL}:${process.env.APP_PORT}/${image}`;
 }
 
-module.exports = { index, show };
+module.exports = { index, show, showLatest };

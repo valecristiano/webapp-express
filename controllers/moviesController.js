@@ -17,9 +17,23 @@ function index(req, res) {
 function show(req, res) {
   const { id } = req.params;
 
-  const moviesSql = `SELECT * FROM movies WHERE id=?`;
+  const moviesSql = `SELECT 
+  movies.id,
+  movies.title,
+  movies.image,
+  movies.abstract,
+  movies.director,
+  movies.release_year,
+  movies.genre
+  FROM movies WHERE id=?`;
 
-  const reviewSql = `SELECT * FROM reviews WHERE movie_id=?`;
+  const reviewSql = `SELECT
+   reviews.id,
+   reviews.movie_id,
+   reviews.name,
+   reviews.vote,
+   reviews.text
+  FROM reviews WHERE movie_id=?`;
 
   connection.query(moviesSql, [id], (err, movieResult) => {
     if (err) return errorQuery(err, res);

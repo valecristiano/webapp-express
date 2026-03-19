@@ -11,4 +11,6 @@ router.get("/bestrated", moviesController.showBestRated);
 
 router.get("/:id", moviesController.show);
 
+router.post("/:id/review", moviesController.postReview);
+
 module.exports = router;

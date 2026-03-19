@@ -14,6 +14,26 @@ function index(req, res) {
   });
 }
 
+function postReview(req, res) {
+  const { id } = req.params;
+  const { name, vote, text } = req.body;
+
+  const sql = `INSERT INTO 
+  movies.reviews
+  (movie_id, name, vote, text) VALUES
+  (?,  ?, ?, ?);`;
+
+  connection.query(sql, [id, name, vote, text], (err, result) => {
+    if (err) return errorQuery(err, res);
+
+    const showReviewSql = `SELECT * from movies.reviews WHERE id=? `;
+
+    connection.query(showReviewSql, [result.insertId], (err, result) => {
+      res.json({ result: result[0] });
+    });
+  });
+}
+
 function showLatest(req, res) {
   const sqlLatest = `SELECT 
   movies.id,
@@ -110,8 +130,8 @@ function show(req, res) {
   });
 }
 
+module.exports = { index, show, showLatest, showBestRated, postReview };
+
 function moviesImageUrl(image) {
   return `${process.env.APP_URL}:${process.env.APP_PORT}/${image}`;
 }
-
-module.exports = { index, show, showLatest, showBestRated };
